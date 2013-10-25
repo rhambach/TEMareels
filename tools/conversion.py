@@ -9,10 +9,10 @@
 import numpy as np;
 
 # constants in atomic units, e=hbar=m=1/(4pi eps0)=1
-c       = 137.0;           # a.u.
+c       = 137.035999074;   # a.u.
 bohr    = 0.52917720859;   # Angstrom
 Hartree = 27.211396;       # eV
-E0 	= 510.9989;	   # rest mass of electron in keV
+E0      = 510.9989;	       # rest mass of electron in keV
 
 # conversion routines
 def gamma(V):
