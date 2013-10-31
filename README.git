@@ -1,0 +1,20 @@
+HOWTO INCLUDE external tools directory
+http://git-scm.com/book/en/Git-Tools-Subtree-Merging
+
+1. git remote add tools_remote share:/home/share/git/scripts/eels/tools
+2. git fetch tools_remote
+3. git checkout -b tools tools_remote/master
+4. git checkout master
+# and only the first time (if not tools directory is yet present)
+#  git read-tree --prefix=tools/ -u tools
+
+HOWTO UPDATE external tools directory
+
+1. git checkout tools
+2. git pull
+3. git checkout master
+4. git merge -s subtree tools
+
+HOWTO DIFF
+
+1. git diff-tree -p tools
