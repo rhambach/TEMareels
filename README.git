@@ -1,3 +1,37 @@
+HOWTO publish existing git on GitHub without history
+http://stackoverflow.com/questions/5724522
+
+# create orphan branch in old repository
+1. cd TEMareels.old
+2. git checkout --orphan export2github
+3. git commit -m "creating clean copy of my code without history" 
+
+# import orphan branch in GitHub repository (on branch import)
+1. git clone https://github.com/rhambach/TEMareels.git
+2. cd TEMareels
+3. git branch import; git checkout import;
+4. git pull /path/to/TEMareels.old export2github
+# perform merging if necessary
+5. git status
+6. git mergetool <file_with_conflict>
+7. git commit -a -m "importing latest version of local git repository"
+8. git checkout master
+9. git merge import
+10. git push  # to GitHub repository
+
+# now newrepo has just the new history; we can set up oldrepo to pull from it
+1. cd TEMareels.old
+2. git remote add github-repo /path/to/TEMareels
+3. git remote update
+4. git branch --set-upstream master github-repo/master
+
+# ... do work in TEMareels, commit, push to GitHub, etc.
+# Now if we want to look at the full history in : TEMareels.old
+1. cd TEMareels.old
+2. git pull
+3. gitk
+
+
 HOWTO INCLUDE external tools directory
 http://git-scm.com/book/en/Git-Tools-Subtree-Merging
 

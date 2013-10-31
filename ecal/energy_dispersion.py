@@ -158,7 +158,7 @@ def get_dispersion(spectra, refname, DE=None, order=2, \
 if __name__ == '__main__':
 
   spectra  = ["../tests/Eseries%i.tif" %i for i in range(1,4)];
-  refname  = "../tests/reference.msa";
+  refname  = "../tests/Ereference.msa";
   e2x      = get_dispersion(spectra,refname,verbosity=5,order=2,ampl_cut=0.5);
 
   # test calibration of energy axis (consistency with previous results)

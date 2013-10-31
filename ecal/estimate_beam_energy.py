@@ -21,7 +21,7 @@ from TEMareels.ecal.fit_peak_pos import get_peak_pos;
 
 # calculate dispersion
 spectra  = ["../tests/Eseries%i.tif" %i for i in range(1,4)];
-refname  = "../tests/reference.msa";
+refname  = "../tests/Ereference.msa";
 order    = 2;
 DE       = None;  # energy width of shifted scale [eV]
 e2x      = get_dispersion(spectra,refname,verbosity=0,order=order,ampl_cut=0.5);

@@ -207,7 +207,7 @@ def get_peak_pos(filename, refname=None, medfilt_radius=5, sort=False, border=10
 # -- main ----------------------------------------
 if __name__ == '__main__':
 
-  ref = "../tests/reference.msa"; # ref: maximum must be at the center !
+  ref = "../tests/Ereference.msa"; # ref: maximum must be at the center !
   dat = "../tests/Eseries1.tif";  # spectra
 
   get_peak_pos(dat,ref, sort=False, border=80, verbosity=3);
