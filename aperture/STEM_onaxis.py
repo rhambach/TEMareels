@@ -12,13 +12,13 @@
        return AP.moment(0,E);
 
   Copyright (c) 2013, rhambach. 
-    This file is part of the TEM-AREELS package and released
+    This file is part of the TEMareels package and released
     under the MIT-Licence. See LICENCE file for details.
 """
 
 import numpy as np;
-from   aperture import Aperture
-import tools.conversion as conv
+from   TEMareels.aperture.aperture import Aperture
+import TEMareels.tools.conversion as conv
 
 class STEM_onaxis(Aperture):
   " Circular on-axis aperture in a STEM "

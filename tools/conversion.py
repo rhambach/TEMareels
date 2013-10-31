@@ -2,7 +2,7 @@
   Common parameter conversions in the electron microscope
      
   Copyright (c) 2013, rhambach. 
-    This file is part of the TEM-AREELS package and released
+    This file is part of the TEMareels package and released
     under the MIT-Licence. See LICENCE file for details.
 """
 
