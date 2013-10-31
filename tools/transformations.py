@@ -103,6 +103,7 @@ class Normalize(Transformation):
     u,v= np.atleast_1d(u,v);
     x = u*self.width+self.x0;
     y = v*self.width*self.aspect+self.y0;
+    if v.size==1: return(x[0],y[0]);              # convert to scalar
     return x,y
 
   def inverse(self,x,y):
@@ -110,6 +111,7 @@ class Normalize(Transformation):
     x,y= np.atleast_1d(x,y);
     u = (x-self.x0)/self.width;
     v = (y-self.y0)/self.width/self.aspect;
+    if x.size==1: return(u[0],v[0]);              # convert to scalar
     return u,v;
 
   def info(self,verbosity=0):
@@ -237,6 +239,7 @@ class TrapezoidalDistortion(Transformation):
     u,v= np.atleast_1d(u,v);
     x = u+(self.vp[0]-u)*(v/self.vp[1]);
     y = v;
+    if v.size==1: return(x[0],y[0]);              # convert to scalar
     return x,y
 
   def inverse(self,x,y):
@@ -244,6 +247,7 @@ class TrapezoidalDistortion(Transformation):
     x,y= np.atleast_1d(x,y);
     u = (x*self.vp[1] - y*self.vp[0])/(self.vp[1]-y);
     v = y;
+    if y.size==1: return(u[0],v[0]);              # convert to scalar
     return u,v;
 
   def info(self,verbosity=0):
