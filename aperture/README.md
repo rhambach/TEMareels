@@ -1,28 +1,24 @@
-aperture
-========
+TEMareels.aperture
+==================
 
 Calculate angular correction function and the distribution of momentum
 transfers q contributing to an electron energy-loss spectrum recorded
 using a finite collection aperture in the TEM and STEM. For a detailed
-description see [1] (an supplemental material in [1]).
+description see [1] (and supplemental material of [1]).
 
-EXAMPLES
+### Examples
 
 The scripts include examples at the end of each file. To run these
-examples, first add the root directory to the Python search path
+examples, execute
 
-$ PYTHONPATH=$PYTHONPATH:<TEMareels_ROOT>
-
-and execute the scripts using
-
+```shell
 $ python TEM_wqslit.py
 $ python STEM_onaxis.py 
+```
 
-
-
-ISSUES
+### Issues
 
 1. Python-weave is not working.
 
 Reference: 
-[1] XXX
+[1] P. Wachsmuth, R. Hambach, U. Kaiser *et.al.*, Phys.Rev.B **(88)**, 075433 (2013). http://link.aps.org/doi/10.1103/PhysRevB.88.075433
