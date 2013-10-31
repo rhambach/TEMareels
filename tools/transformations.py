@@ -145,7 +145,7 @@ class NonlinearDispersion(Transformation):
       # slightly reduce xrange to avoid 1/0 in _inv_disp()   
       if np.all(np.isfinite(xrange)): 
         x0 = np.sum(xrange)/2.;
-        self.xrange = np.asarray(xrange)*(1-1e-6) + x0 * 1e-6;
+        xrange = np.asarray(xrange)*(1-1e-6) + x0 * 1e-6;
     self.xrange = np.asarray(xrange);
 
     # test xrange
