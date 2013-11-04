@@ -30,7 +30,7 @@ outfile = "Ecalibration.tif";
 image = tvips.load_TVIPS(series[0]);
 Ny,Nx = image.shape
 Ns    = len(series);
-E     = np.arange(0,Ns,1);  # dE=1eV
+E     = np.arange(0,Ns,dE);  # dE=1eV
 
 # iterate over all images and extract EELS spectrum
 x0 = np.zeros(Ns);             # center of spectrum
