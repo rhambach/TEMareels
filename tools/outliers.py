@@ -46,7 +46,7 @@ def remove_outliers(img,radius,abs_thresh=50,rel_thresh=1,verbosity=0):
   if verbosity>0: print "Number of outliers: ", np.sum(bad);
   if verbosity>1: print "Variance of error:  ", np.std(err);
   if verbosity>2:
-    import wqplot.wq_stack as wqplt
+    import TEMareels.gui.wq_stack as wqplt
     import matplotlib.pylab as plt
     desc = [ {'desc': title} for title in \
       ('original image', 'filtered image', 'outliers', 'noise+outliers')];
