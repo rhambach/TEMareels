@@ -17,13 +17,19 @@ def remove_outliers(img,radius,abs_thresh=50,rel_thresh=1,verbosity=0):
 
    - absolute_threshold:  |val - median|        > abs_thresh
    - relative_threshold:  |val - median|/median > rel_thresh 
-
+   
   Input parameters:
     img       ... image
     radius    ... radius for neighborhood of pixels (box of size 2*radius+1)
     abs_thresh... absolute threshold, can be 0 [counts]
     rel_thresh... relative threshold, can be 0
     verbosity ... 0: silient, 1: print infos, 3: debug
+
+  NOTE: in ImageJ outliers will be removed if (for bright pixels)
+           val - median > abs_thresh
+    This is not really adequate for WQmaps, where we have a huge 
+    dynamic range in each image and it is difficult to define a 
+    absolute threshold (would artificially remove signal at q=0)
 
   RETURNS:
     corrected image
