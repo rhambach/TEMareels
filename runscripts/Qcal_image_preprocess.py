@@ -37,7 +37,7 @@ for filename in files:
   #binimg = binning(binimg.T,32).T;      # binning along x
 
   outfile = filename.split(".tif")[0]+"_filt_bin%d.tif"%ybin;
-  tiff.imsave(outfile,image.astype(np.float32));
+  tiff.imsave(outfile,binimg.astype(np.float32));
 
 
 
