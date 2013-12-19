@@ -21,20 +21,10 @@ class WQBrowser(object):
   WQBrowser shows a grayscale image in a separate window
   """
 
-  def __init__(self,image,imginfo={},verbosity=0,**kwargs):
+  def __init__(self,image=None,imginfo={},verbosity=0,cmap=None,**kwargs):
     """
-    image  ... 2D Array 
-    imginfo... (opt) dictionary with parameters of the image:
-               'desc'     ... image description (default: '')
-               'filename' ... filename of the image (default: '')
-               'xlabel'   ... name for x-axis    (default: x)
-               'ylabel'   ... name for y-axis    (default: y)
-               'xperchan' ... scaling for x-axis (default: 1)
-               'yperchan' ... scaling for y-axis (default: 1)
-               'xunits'   ... unit for x-axis (default: 'px')
-               'yunits'   ... unit for y-axis (default: 'px')
-               'xoffset'  ... first x-value   (default: 0)
-               'yoffset'  ... first y-value   (default: 0)
+    image  ... (opt) 2D Array 
+    imginfo... (opt) dictionary with parameters of the image
     verbosity. (opt) quiet (0), verbose (3), debug (4)
     futher options are passed to the imshow method of matplotlib
     """
@@ -66,14 +56,16 @@ class WQBrowser(object):
 
     # key pressed
     self.fig.canvas.mpl_connect('key_press_event', self._key_press_callback)
+   
+    # draw image if given
+    self.set_cmap(cmap);
+    if image is not None: 
+      self.set_image(image,imginfo);
 
-    # finally draw image 
-    self._reset_image();     
-
-
-  def set_cmap(self,cmap):
+  def set_cmap(self,cmap=None):
     "Change the colormap"
-    self.cmap=cmap;
+    if cmap is None: self.cmap=plt.gray();
+    else:            self.cmap=cmap;
 
   def set_style(self,label):
     """ 
@@ -123,6 +115,41 @@ class WQBrowser(object):
     if event.key.upper()=='R':
       self._reset_image();
 
+  def set_image(self,image,imginfo={},reset=True):
+    """
+    changes displayed image
+
+    image  ... 2D Array 
+    imginfo... (opt) dictionary with parameters of the image:
+               'desc'     ... image description (default: '')
+               'filename' ... filename of the image (default: '')
+               'xlabel'   ... name for x-axis    (default: x)
+               'ylabel'   ... name for y-axis    (default: y)
+               'xperchan' ... scaling for x-axis (default: 1)
+               'yperchan' ... scaling for y-axis (default: 1)
+               'xunits'   ... unit for x-axis (default: 'px')
+               'yunits'   ... unit for y-axis (default: 'px')
+               'xoffset'  ... first x-value   (default: 0)
+               'yoffset'  ... first y-value   (default: 0)
+    reset...   (opt) boolean specifying, if Image should be redrawn or not
+    """
+    # set default values for imginfo
+    self.image  = np.asarray(image);
+    self._set_imginfo(imginfo);       
+    self.axis.set_title(self.imginfo['desc']);    
+
+    # update image
+    if self.AxesImage and not reset:
+      self.AxesImage.set_data(self.image);      # update data
+      self._update();
+    else:
+      self._reset_image();                      # new image
+
+    # update LinePlot, if present
+    if self.LineProfile is not None: 
+      self.LineProfile.reset();    
+
+
   def _set_imginfo(self,imginfo):
     " set default values for imginfo and extent"
 
@@ -150,19 +177,23 @@ class WQBrowser(object):
 
   def _reset_image(self):
     " redraw image "
+
+    # contrast range and colormap
     self.vmin = np.min(self.image);
     self.vmax = np.max(self.image);
     self.vmean= np.mean(self.image);
     self.cmap = plt.cm.gray;      
 
+    # create new image
     if self.AxesImage is not None: self.AxesImage.remove();
-    self.AxesImage = self.axis.imshow(self.image,cmap=plt.gray(),\
-        extent=self.imginfo['extent'],**self.kwargs);
+    self.AxesImage = self.axis.imshow(self.image,cmap=self.cmap,
+                       extent=self.imginfo['extent'],**self.kwargs);
     self.axis.set_xlabel("%s [%s]" % (self.imginfo['xlabel'], self.imginfo['xunits']));
     self.axis.set_ylabel("%s [%s]" % (self.imginfo['ylabel'], self.imginfo['yunits']));
     self.axis.set_xlim(*self.imginfo['extent'][0:2]);
     self.axis.set_ylim(*self.imginfo['extent'][2:4]);
     self.set_style(self.currentstyle);
+    self._update();
 
   def _update(self):
     self.fig.canvas.draw();
@@ -336,7 +367,7 @@ class LineProfile():
 
 # -- main ----------------------------------------
 if __name__ == '__main__':
-  import calibration.tools.tifffile as tiff
+  import TEMareels.tools.tifffile as tiff
   
   coeff = [
 [[  8.53185497e-06, 5.74373869e-02, 6.63128635e+02],
@@ -348,7 +379,7 @@ if __name__ == '__main__':
   stack = []; info = []; lines = [];
   for i in (1,2):
     # read image from file
-    filename = '../test/qseries%d.tif'%i;
+    filename = '../tests/qseries%d.tif'%i;
     stack.append(tiff.imread(filename));
 
     # info for image
