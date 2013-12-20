@@ -28,20 +28,14 @@ class WQBrowser(object):
     verbosity. (opt) quiet (0), verbose (3), debug (4)
     futher options are passed to the imshow method of matplotlib
     """
-
-    self.image  = np.asarray(image);
     self.kwargs = kwargs;
     self.verbosity=verbosity;
 
-    # set default values for imginfo and extent
-    self._set_imginfo(imginfo);
-         
     # open new figure and draw image
     self.fig  = plt.figure();
     self.axis = self.fig.add_subplot(111); 
     self.fig.subplots_adjust(right=0.85);
     self.AxesImage=None;
-    self.axis.set_title(self.imginfo['desc']);
       
     # add Switches and Buttons
     axStyle = self.fig.add_axes([0.85, 0.1, 0.12, 0.12]);
