@@ -182,7 +182,6 @@ class WQBrowser(object):
     self.vmin = np.min(self.image);
     self.vmax = np.max(self.image);
     self.vmean= np.mean(self.image);
-    self.cmap = plt.cm.gray;      
 
     # create new image
     if self.AxesImage is not None: self.AxesImage.remove();
@@ -251,24 +250,15 @@ class WQStackBrowser(WQBrowser):
     if    self.slice==int(val): return # still the same slice
     self.slice= int(val);
 
-    # update image data
-    self.image = self.imgstack[self.slice];
-    self.AxesImage.set_data(self.image);
-
     # update line data
     while self.axis.lines: self.axis.lines.pop();  # remove all lines
     for line2D in np.atleast_1d(self.linestack[self.slice]):
       self.axis.add_line(line2D);                  # add lines for slice
 
-    # set default values for imginfo
-    self._set_imginfo(self.stackinfo[self.slice]);
-    self.axis.set_title(self.imginfo['desc']);
-
-    # update LinePlot, if present
-    if self.LineProfile is not None: self.LineProfile.reset();    
-
-    self._update();
-
+    # update image and redraw
+    self.set_image(self.imgstack[self.slice], 
+                   imginfo=self.stackinfo[self.slice], 
+                   reset=False);
 
 
 class LineProfile():
