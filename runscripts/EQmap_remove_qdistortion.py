@@ -55,7 +55,7 @@ import matplotlib.pylab as plt
 import TEMareels.tools.tifffile as tiff
 import TEMareels.tools.transformations as trafo
 from TEMareels.qcal.momentum_dispersion import calibrate_qaxis
-from TEMareels.gui.wq_stack import WQBrowser
+from TEMareels.gui.wq_stack import WQBrowser, WQStackBrowser
 from TEMareels.tools import rebin
 from TEMareels import Release
 
@@ -86,8 +86,8 @@ img     = tiff.imread(filename);
 Ny,Nx   = img.shape;
 ybin,xbin=N/float(Ny), N/float(Nx);
 
-x0,y0,xl,xr = 2377,967,198,3766;   # position of reference point and slit
-                                   #   borders in WQmap
+x0,y0 = 2377,967;                  # position of reference point in WQmap
+xl,xr = 0,N;                       # (opt) slit borders in WQmap (fine-tuning of spec-mag)
 Gl,Gr = 1193,3527;                 # coordinates of left+right Bragg spot at y0
 G = 2.96;                          # length |G| corresponding to x0-Gl and Gr-x0
 u2x = trafo.Normalize(x0,y0,xl,xr);# (u,v) -> (x,y)
@@ -119,10 +119,11 @@ if verbosity>9:
   t  = np.linspace(-N/2,1.5*N,100);  # sampling along energy axis
   S,T= np.meshgrid(sbins,t); 
   X,Y= s2x.transform(S,T);
-
+  X0,Y0=s2x.transform(0,t);          # q=0 line
   info = {'desc': 'DEBUG: input image', 'xperchan':xbin, 'yperchan':ybin};
   WQB  = WQBrowser(img,info,aspect='auto');
   WQB.axis.plot(X,Y,'r');
+  WQB.axis.plot(X0,Y0,'g');
   plt.show();
 
 # 4. rebinning for each line
@@ -138,9 +139,12 @@ for n,line in enumerate(img):
 ret=np.asarray(ret);
 
 if verbosity>9:
-  info = {'desc': 'DEBUG: rebinned image', 'yperchan':ybin,
-          'xperchan': dq, 'xunits':'1/A', 'xlabel':'q', 'xoffset':q[0]};
-  fig  = WQBrowser(ret,info,aspect='auto');
+  info=[];
+  info.append({'desc': 'DEBUG: rebinned image', 'yperchan':ybin,
+          'xperchan': dq, 'xunits':'1/A', 'xlabel':'q', 'xoffset':q[0]});
+  info.append({'desc': 'DEBUG: rebinned image (reversed q-axis)', 'yperchan':ybin,
+          'xperchan': -dq, 'xunits':'1/A', 'xlabel':'-q', 'xoffset':q[-1]});
+  fig  = WQStackBrowser([ret,ret],info,aspect='auto');
   plt.show();
 
 # 5. save undistorted w-q map

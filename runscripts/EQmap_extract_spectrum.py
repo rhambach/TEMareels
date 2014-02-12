@@ -60,6 +60,7 @@ verbosity = 10;
 
 # Experimental parameters
 E0        = 40;         # keV, beam energy
+E0_offset = 0;          # eV, beam energy offset (e.g. for core-loss)
 ytilt     = 0;          # degree, tilt of sample
 time      = 400000;     # ms,  total exposure time
 qdir      = 'GM';       # crystallographic axis of slit
@@ -81,7 +82,6 @@ FILE = open(edisp_name,'r');
 edisp= pickle.Unpickler(FILE).load();
 FILE.close();
 e2y  = edisp['e2x'];
-ehistory = edisp['history'];
 print 'READ Energy Calibration: ' + edisp['descr'];
 
 # 2. read undistorted E-q map
@@ -128,11 +128,11 @@ for iq, q in enumerate(qaxis):
   spectrum = rebin.rebin(y,line,ybins);
   EQmap.append(spectrum);
 EQmap=np.asarray(EQmap).T;  # first index E, second q
-ehistory+="\nRebinning for Emin=%8.5f, Emax=%8.5f, dE=%8.5f"%(E.min(), E.max(),dE);
+history="\nRebinning for Emin=%8.5f, Emax=%8.5f, dE=%8.5f"%(E.min(), E.max(),dE);
 # DEBUG: plot calibrated Eqmap
 if verbosity>9:
   info = {'desc': 'DEBUG: rebinned WQmap', 
-          'xperchan':dE, 'ylabel':'E', 'yunits':'eV',
+          'xperchan':dE, 'xlabel':'E', 'xunits':'eV',
           'yperchan':dqx,'ylabel':'q', 'yunits':'1/A',
           'yoffset' :qaxis[0]};
   WQB  = WQBrowser(EQmap.T,info,aspect='auto');
@@ -146,11 +146,15 @@ tiff.imsave(outfile,EQmap.astype(np.float32));
 # 6. save energy-loss function
 for iq, q in enumerate(qaxis):
   if qmin > q or q > qmax: continue 
-  E0_offset,_ = e2y.inverse(y0_fit(iq),y0_fit(iq));          # keV, beam energy offset
+
+  # calibrate offset in energy axis (so far E=0eV at x=0px)
+  E_ZLP,_ = e2y.inverse(y0_fit(iq),y0_fit(iq)); 
+  Ecorr   = E + E0_offset - E_ZLP;
   # calculate aperture correction function for given q (rectangular aperture)
+  # note: APC for negative energies is well defined (energy gain)
   if apply_APC==True:
     aperture = TEM_wqslit(q*conv.bohr,dqx*conv.bohr,dqy*conv.bohr,E0);
-    APC      = [aperture.get_APC(_E) for _E in E];
+    APC      = [aperture.get_APC(_E) for _E in Ecorr];
   else: APC  = 1;
   elf = EQmap[:,iq]/APC
 
@@ -159,7 +163,7 @@ for iq, q in enumerate(qaxis):
   param = { 'title'   : title + ', ELF',
             'owner'   : owner,
             'xunits'  : 'eV', 'yunits'  : 'counts',
-            'xperchan': dE,   'offset'  : -E0_offset};
+            'xperchan': dE,   'offset'  : -E_ZLP};
   # optional parameters
   opt       = [];
   opt.append(('#SIGNALTYPE','ELS'));
@@ -179,7 +183,8 @@ for iq, q in enumerate(qaxis):
   for l in data['history'].split('\n'):   opt.append(('#COMMENT',l));
   opt.append(('#COMMENT',''));
   for l in edisp['history'].split('\n'):  opt.append(('#COMMENT',l));
-
+  opt.append(('#COMMENT',''));
+  for l in history.split('\n'):  opt.append(('#COMMENT',l));
 
   # write data
   root = filename.split('/')[-1].split('.tif')[0];
