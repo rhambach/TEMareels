@@ -98,7 +98,7 @@ ybin,xbin= N/float(Ny), N/float(Nx);     # binning
 print "READ undistorted E-q map: " + data['descr'];
 
 #find and fit zlp
-y0_fit = find_zlp.find_zlp(yqmap,delta=10,verbosity=verbosity);
+y0_fit = find_zlp.find_zlp(yqmap,qaxis,delta=10,verbosity=verbosity);
 plt.show();
 
 # 3. create bin boundaries ( in slit coordinates )
@@ -148,7 +148,7 @@ for iq, q in enumerate(qaxis):
   if qmin > q or q > qmax: continue 
 
   # calibrate offset in energy axis (so far E=0eV at x=0px)
-  E_ZLP,_ = e2y.inverse(y0_fit(iq),y0_fit(iq)); 
+  E_ZLP,_ = e2y.inverse(y0_fit(q),y0_fit(q)); 
   Ecorr   = E + E0_offset - E_ZLP;
   # calculate aperture correction function for given q (rectangular aperture)
   # note: APC for negative energies is well defined (energy gain)
