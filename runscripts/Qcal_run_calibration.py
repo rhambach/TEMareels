@@ -50,7 +50,7 @@ try:
   QDisp.crop_img(xmin=100,ymin=1000);
   QDisp.fit_aperture_borders(rel_threshold=0.2,dev=3);
 
-  QDisp.normalize_coordinates(2377,967,198,3766); # x0, y0, xl, xr
+  QDisp.normalize_coordinates(2377,967,0,4096); # x0, y0, xl, xr
   QDisp.fit_polynomial_distortions(I=3,J=2,const='fixed_slit');
   QDisp.linearize_qaxis(ord=2);
 except:

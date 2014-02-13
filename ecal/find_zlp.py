@@ -14,9 +14,10 @@
 """
 import numpy as np
 import matplotlib.pylab as plt
+from TEMareels.gui.wq_stack import WQBrowser
 
 
-def find_zlp(img,delta=40,vmax=1000000,verbosity=0):
+def find_zlp(img,delta=40,vmax=1000000,verbosity=0,N=4096):
  """ 
  delta  ignore all peaks more than delta away from reference value
  vmax   option for imshow, adjust contrast etc
@@ -24,7 +25,8 @@ def find_zlp(img,delta=40,vmax=1000000,verbosity=0):
  
  img = np.asarray(img);
  Ny,Nx   = img.shape;
- x = np.arange(Nx,dtype=float);
+ ybin,xbin= N/float(Ny), N/float(Nx);     # binning
+ x = np.arange(N,dtype=float);
  
  peaks = []
  sum = img.sum(axis=1)#np.empty(Nx);
@@ -36,21 +38,22 @@ def find_zlp(img,delta=40,vmax=1000000,verbosity=0):
 
 
  for i in range(0,Nx):
-  peak_value = img[:,i].max();
-  peak_index = img[:,i].argmax();
-  if np.abs(peak_index - y_start)<delta:
-   peaks.append([i,peak_index]);
-   if verbosity > 9:
-    plt.plot(i,peak_index, 'ro', linewidth=5);
+   peak_value = img[:,i].max();
+   peak_index = img[:,i].argmax();
+   if np.abs(peak_index - y_start)<delta:
+     peaks.append([i*xbin,peak_index*ybin]);
  
  peaks = np.asarray(peaks);
  fit = np.polyfit(peaks[:,0],peaks[:,1],2);
  fitFunc = np.poly1d(fit)
 
  if verbosity > 9:
-  plt.title('Find Zero-Loss Peak');
-  plt.plot(x,fitFunc(x)); 
-  plt.imshow(img, vmin=0, vmax=vmax, cmap='gray', aspect='auto');
+  info = {'desc': 'Find Zero-Loss Peak',
+          'xperchan':xbin,'yperchan':ybin};
+  WQB  = WQBrowser(img,info,aspect='auto');
+  WQB.axis.plot(peaks[:,0],peaks[:,1], 'ro');  
+  WQB.axis.plot(x,fitFunc(x)); 
+
 
  return fitFunc;
  

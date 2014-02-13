@@ -74,13 +74,13 @@ class Aperture(object):
     return self.moment(2,E) / norm  - (self.moment(1,E)/norm)**2
   
 
-  def get_eels(self, Iepsi, dq=0.01, qmax=None):
+  def get_eels(self, Iepsi, dq, qmax=None):
     """
     Calculate the Integral Int dq w(q,E) Iepsi(q,E) / Int dq w(q,E).
 
       Iepsi ... Object which returns Im 1/eps(q,E) for any q [a.u.], 
                   must provide the functions get_E() and get_eels(q[:])
-      dq    ... (opt) integration step [a.u.]
+      dq    ... integration step [a.u.], has to be converged
 
     RETURNS
       eels as 1D array of length;

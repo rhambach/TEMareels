@@ -222,6 +222,18 @@ class MSA:
     plt.legend();
     return fig;
 
+def GetMSA(pattern,verbosity=0):
+  """
+  Reads all *.msa files that match the file name pattern
+  RETURN list of spectra (MSA-objects)
+  """
+  import glob;
+  spectra=[];
+  for filename in glob.glob(pattern):
+    if verbosity > 0: print "read file '%s'" % filename;
+    spectra.append(MSA(filename));
+  return spectra;
+
 # -- main ----------------------------------------
 if __name__ == '__main__':
    import matplotlib.pylab as plt;
