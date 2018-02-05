@@ -6,7 +6,7 @@
 
 # describe release
 name        = 'TEMareels'
-version     = '1.0.0'
+version     = '1.1.0'
 version_id  = 'none'
 description = "Analysis scripts for momentum-resolved energy-loss spectra taken in a transmission electron microscope."
 license     = 'MIT Licence'
